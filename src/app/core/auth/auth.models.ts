@@ -12,6 +12,10 @@ export interface LoginRequest {
 export interface UserLocation {
   Location_Code: string;
   Location_Name: string;
+  Stock_Handle?: number;
+  Address?: string;
+  Phone?: string;
+  Status?: number;
 }
 
 export interface LoginUser {

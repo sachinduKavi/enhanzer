@@ -1,19 +1,25 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable, switchMap, tap } from 'rxjs';
+import { LocationService } from '../location/location.service';
 import {
   AuthSession,
   InvalidCredentialsError,
   LoginRequest,
   LoginResponse,
+  LoginUser,
+  UserLocation,
 } from './auth.models';
 
 const LOGIN_API_URL = 'https://ez-staging-api.azurewebsites.net/api/External_Api/POS_Api/Invoke';
 const SESSION_STORAGE_KEY = 'enhanzer.session';
 
+type AuthenticatedUser = LoginUser & { User_Locations: UserLocation[] };
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly locationService = inject(LocationService);
   private readonly session = signal<AuthSession | null>(this.readStoredSession());
 
   readonly isAuthenticated = computed(() => this.session() !== null);
@@ -28,21 +34,26 @@ export class AuthService {
     };
 
     return this.http.post<LoginResponse>(LOGIN_API_URL, request).pipe(
-      map((response) => this.toSession(response)),
+      map((response) => this.getAuthenticatedUser(response)),
+      switchMap((user) =>
+        this.locationService
+          .saveLocations(user.User_Locations)
+          .pipe(map(() => ({ email: user.Email, displayName: user.User_Display_Name ?? user.Email }))),
+      ),
       tap((session) => this.storeSession(session)),
     );
   }
 
   // The API answers failed logins with HTTP 200, so success is decided by the
   // presence of User_Locations rather than by the status code.
-  private toSession(response: LoginResponse): AuthSession {
+  private getAuthenticatedUser(response: LoginResponse): AuthenticatedUser {
     const user = response.Response_Body?.[0];
 
     if (!user?.User_Locations) {
       throw new InvalidCredentialsError();
     }
 
-    return { email: user.Email, displayName: user.User_Display_Name ?? user.Email };
+    return user as AuthenticatedUser;
   }
 
   // sessionStorage is cleared when the tab closes. The password is never stored.

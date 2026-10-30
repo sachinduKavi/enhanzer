@@ -1,17 +1,35 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { InvalidCredentialsError, LoginResponse } from './auth.models';
+import { Observable, of, throwError } from 'rxjs';
+import { vi } from 'vitest';
+import { LocationService } from '../location/location.service';
+import { InvalidCredentialsError, LoginResponse, UserLocation } from './auth.models';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let service: AuthService;
   let httpTesting: HttpTestingController;
+  const saveLocations = vi.fn<(locations: UserLocation[]) => Observable<void>>();
+
+  const locations: UserLocation[] = [{ Location_Code: 'L1', Location_Name: 'Head Office' }];
+  const successResponse: LoginResponse = {
+    Status_Code: 200,
+    Message: '',
+    Response_Body: [
+      { Email: 'user@example.com', User_Display_Name: 'Test User', User_Locations: locations },
+    ],
+  };
 
   beforeEach(() => {
     sessionStorage.clear();
+    saveLocations.mockReset().mockReturnValue(of(undefined));
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: LocationService, useValue: { saveLocations } },
+      ],
     });
     service = TestBed.inject(AuthService);
     httpTesting = TestBed.inject(HttpTestingController);
@@ -43,21 +61,21 @@ describe('AuthService', () => {
     request.flush({ Status_Code: 401, Message: '', Response_Body: null });
   });
 
-  it('stores a session without the password when User_Locations is returned', () => {
-    flushLogin({
-      Status_Code: 200,
-      Message: '',
-      Response_Body: [
-        {
-          Email: 'user@example.com',
-          User_Display_Name: 'Test User',
-          User_Locations: [{ Location_Code: 'L1', Location_Name: 'Head Office' }],
-        },
-      ],
-    });
+  it('saves the locations, then stores a session without the password', () => {
+    flushLogin(successResponse);
 
+    expect(saveLocations).toHaveBeenCalledWith(locations);
     expect(service.isAuthenticated()).toBe(true);
     expect(sessionStorage.getItem('enhanzer.session')).not.toContain('secret');
+  });
+
+  it('does not sign in when saving the locations fails', () => {
+    saveLocations.mockReturnValue(throwError(() => new Error('Failed to save locations.')));
+
+    const { error } = flushLogin(successResponse);
+
+    expect(error).toBeInstanceOf(Error);
+    expect(service.isAuthenticated()).toBe(false);
   });
 
   it('rejects a wrong password, which the API reports with Status_Code 200', () => {
@@ -68,6 +86,7 @@ describe('AuthService', () => {
     });
 
     expect(error).toBeInstanceOf(InvalidCredentialsError);
+    expect(saveLocations).not.toHaveBeenCalled();
     expect(service.isAuthenticated()).toBe(false);
   });
 
