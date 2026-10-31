@@ -1,16 +1,36 @@
 <div class="min-h-dvh bg-gray-100 sm:p-6">
   <div class="mx-auto max-w-7xl overflow-hidden bg-white shadow-md sm:rounded-md">
     <app-page-header title="Purchase Bill" subtitle="Enter Information for the Purchase Bill">
-      <button class="cursor-pointer rounded-full p-1 hover:bg-white/15" type="button" title="Reset" aria-label="Reset">
+      <button
+        class="cursor-pointer rounded-full p-1 hover:bg-white/15"
+        type="button"
+        title="Reset"
+        aria-label="Reset"
+      >
         <app-icon class="size-6" name="refresh" />
       </button>
-      <button class="cursor-pointer rounded-full p-1 hover:bg-white/15" type="button" title="New bill" aria-label="New bill">
+      <button
+        class="cursor-pointer rounded-full p-1 hover:bg-white/15"
+        type="button"
+        title="New bill"
+        aria-label="New bill"
+      >
         <app-icon class="size-6" name="plus-circle" />
       </button>
-      <button class="cursor-pointer rounded-full p-1 hover:bg-white/15" type="button" title="Save bill" aria-label="Save bill">
+      <button
+        class="cursor-pointer rounded-full p-1 hover:bg-white/15"
+        type="button"
+        title="Save bill"
+        aria-label="Save bill"
+      >
         <app-icon class="size-6" name="check-circle" />
       </button>
-      <button class="cursor-pointer rounded-full p-1 hover:bg-white/15" type="button" title="Close" aria-label="Close">
+      <button
+        class="cursor-pointer rounded-full p-1 hover:bg-white/15"
+        type="button"
+        title="Close"
+        aria-label="Close"
+      >
         <app-icon class="size-6" name="x-circle" />
       </button>
     </app-page-header>
@@ -29,10 +49,14 @@
           @if (activeDetailTab() === 'Items') {
             <div class="min-h-64 pt-6"></div>
           } @else {
-            <p class="py-16 text-center text-sm text-gray-500">No {{ activeDetailTab() | lowercase }} for this bill.</p>
+            <p class="py-16 text-center text-sm text-gray-500">
+              No {{ activeDetailTab() | lowercase }} for this bill.
+            </p>
           }
         } @else {
-          <p class="py-16 text-center text-sm text-gray-500">No {{ activePageTab() | lowercase }} for this bill.</p>
+          <p class="py-16 text-center text-sm text-gray-500">
+            No {{ activePageTab() | lowercase }} for this bill.
+          </p>
         }
       </section>
 

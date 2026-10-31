@@ -1,3 +1,4 @@
+import { LowerCasePipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { Icon } from '../shared/components/icon/icon';
 import { PageHeader } from '../shared/components/page-header/page-header';
@@ -6,7 +7,7 @@ import { BillSummary } from './components/bill-summary/bill-summary';
 
 @Component({
   selector: 'app-purchase-bill',
-  imports: [BillSummary, Icon, PageHeader, Tabs],
+  imports: [BillSummary, Icon, LowerCasePipe, PageHeader, Tabs],
   templateUrl: './purchase-bill.html',
 })
 export class PurchaseBill {
