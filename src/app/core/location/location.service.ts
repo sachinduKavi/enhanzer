@@ -4,6 +4,11 @@ import { map, Observable } from 'rxjs';
 import { API_BASE_URL, ApiResponse } from '../api/api';
 import { UserLocation } from '../auth/auth.models';
 
+export interface StoredLocation {
+  locationCode: string;
+  locationName: string;
+}
+
 interface CreateLocationsRequest {
   locations: {
     locationCode: string;
@@ -18,6 +23,12 @@ interface CreateLocationsRequest {
 @Injectable({ providedIn: 'root' })
 export class LocationService {
   private readonly http = inject(HttpClient);
+
+  getLocations(): Observable<StoredLocation[]> {
+    return this.http
+      .get<ApiResponse<StoredLocation[]>>(`${API_BASE_URL}/Location`)
+      .pipe(map((response) => response.data));
+  }
 
   saveLocations(locations: UserLocation[]): Observable<void> {
     const request: CreateLocationsRequest = {

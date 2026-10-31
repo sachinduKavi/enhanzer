@@ -49,6 +49,18 @@ describe('LocationService', () => {
     request.flush({ success: true, message: 'ok', data: null });
   });
 
+  it('returns the saved locations from the backend', () => {
+    let result: unknown;
+    service.getLocations().subscribe((locations) => (result = locations));
+
+    const locations = [{ locationCode: 'L1', locationName: 'Head Office' }];
+    const request = httpTesting.expectOne(`${API_BASE_URL}/Location`);
+    expect(request.request.method).toBe('GET');
+    request.flush({ success: true, message: 'ok', data: locations });
+
+    expect(result).toEqual(locations);
+  });
+
   it('errors when the backend reports success: false', () => {
     let error: unknown;
     service.saveLocations([]).subscribe({ error: (e: unknown) => (error = e) });
