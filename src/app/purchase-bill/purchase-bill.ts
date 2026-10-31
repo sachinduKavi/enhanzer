@@ -1,7 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { Icon } from '../shared/components/icon/icon';
+import { PageHeader } from '../shared/components/page-header/page-header';
+import { Tabs } from '../shared/components/tabs/tabs';
+import { BillSummary } from './components/bill-summary/bill-summary';
 
 @Component({
   selector: 'app-purchase-bill',
-  template: `<h1 class="p-8 text-2xl font-semibold text-gray-700">Purchase Bill</h1>`,
+  imports: [BillSummary, Icon, PageHeader, Tabs],
+  templateUrl: './purchase-bill.html',
 })
-export class PurchaseBill {}
+export class PurchaseBill {
+  protected readonly pageTabs = ['Header', 'Details', 'Notes', 'Documents'] as const;
+  protected readonly detailTabs = ['Items', 'Accounts', 'Taxes'] as const;
+
+  protected readonly activePageTab = signal<string>('Details');
+  protected readonly activeDetailTab = signal<string>('Items');
+}
