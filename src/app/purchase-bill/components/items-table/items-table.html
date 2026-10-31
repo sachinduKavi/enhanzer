@@ -1,0 +1,48 @@
+<table class="w-full min-w-[56rem] text-sm">
+  <thead>
+    <tr class="border-b border-gray-200 text-xs font-medium text-blue-600">
+      <th class="px-2 py-3 text-left font-medium" scope="col">Item</th>
+      <th class="px-2 py-3 text-left font-medium" scope="col">Batch</th>
+      <th class="px-2 py-3 text-right font-medium" scope="col">Standard Cost</th>
+      <th class="px-2 py-3 text-right font-medium" scope="col">Standard Price</th>
+      <th class="px-2 py-3 text-right font-medium" scope="col">Margin</th>
+      <th class="px-2 py-3 text-right font-medium" scope="col">Qty</th>
+      <th class="px-2 py-3 text-right font-medium" scope="col">Free Qty</th>
+      <th class="px-2 py-3 text-right font-medium" scope="col">Discount (%)</th>
+      <th class="px-2 py-3 text-right font-medium" scope="col">Total Cost</th>
+      <th class="px-2 py-3 text-right font-medium" scope="col">Total Selling</th>
+      <th class="w-10 px-2 py-3" scope="col"><span class="sr-only">Actions</span></th>
+    </tr>
+  </thead>
+  <tbody class="divide-y divide-gray-200 text-gray-700 tabular-nums">
+    @for (row of items(); track $index; let i = $index) {
+      <tr class="odd:bg-gray-50">
+        <td class="px-2 py-3">{{ row.item }}</td>
+        <td class="px-2 py-3">{{ row.batch.locationName }}</td>
+        <td class="px-2 py-3 text-right">{{ row.standardCost | number: '1.2-2' }}</td>
+        <td class="px-2 py-3 text-right">{{ row.standardPrice | number: '1.2-2' }}</td>
+        <td class="px-2 py-3 text-right">{{ row.margin | number: '1.2-2' }}</td>
+        <td class="px-2 py-3 text-right">{{ row.qty | number: '1.0-2' }}</td>
+        <td class="px-2 py-3 text-right">{{ row.freeQty | number: '1.0-2' }}</td>
+        <td class="px-2 py-3 text-right">{{ row.discount | number: '1.2-2' }}</td>
+        <td class="px-2 py-3 text-right">{{ row.totalCost | number: '1.2-2' }}</td>
+        <td class="px-2 py-3 text-right">{{ row.totalSelling | number: '1.2-2' }}</td>
+        <td class="px-2 py-1 text-right">
+          <button
+            class="cursor-pointer rounded-full p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
+            type="button"
+            [attr.aria-label]="'Remove ' + row.item"
+            title="Remove"
+            (click)="remove.emit(i)"
+          >
+            <app-icon class="size-5" name="x-circle" />
+          </button>
+        </td>
+      </tr>
+    } @empty {
+      <tr>
+        <td class="px-2 py-8 text-center text-gray-500" colspan="11">No items added yet.</td>
+      </tr>
+    }
+  </tbody>
+</table>

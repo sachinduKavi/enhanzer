@@ -47,7 +47,8 @@
           <app-tabs class="sm:w-fit" [tabs]="detailTabs" [(active)]="activeDetailTab" />
 
           @if (activeDetailTab() === 'Items') {
-            <app-item-entry-form class="block pt-6" />
+            <app-item-entry-form class="block pt-6" (itemAdded)="store.add($event)" />
+            <app-items-table class="mt-4" [items]="store.items()" (remove)="store.remove($event)" />
           } @else {
             <p class="py-16 text-center text-sm text-gray-500">
               No {{ activeDetailTab() | lowercase }} for this bill.
@@ -60,7 +61,11 @@
         }
       </section>
 
-      <app-bill-summary class="shrink-0 lg:w-72" [totalItems]="0" [totalQty]="0" />
+      <app-bill-summary
+        class="shrink-0 lg:w-72"
+        [totalItems]="store.totalItems()"
+        [totalQty]="store.totalQty()"
+      />
     </div>
   </div>
 </div>
