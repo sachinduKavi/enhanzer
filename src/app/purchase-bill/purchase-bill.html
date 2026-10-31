@@ -18,12 +18,21 @@
         <app-icon class="size-6" name="plus-circle" />
       </button>
       <button
-        class="cursor-pointer rounded-full p-1 hover:bg-white/15"
+        class="cursor-pointer rounded-full p-1 hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
         type="button"
-        title="Save bill"
-        aria-label="Save bill"
+        [title]="store.totalItems() ? 'Save bill' : 'Add at least one item to save'"
+        [attr.aria-label]="store.isSaving() ? 'Saving bill' : 'Save bill'"
+        [disabled]="!store.canSave()"
+        (click)="store.save()"
       >
-        <app-icon class="size-6" name="check-circle" />
+        @if (store.isSaving()) {
+          <span
+            class="block size-6 animate-spin rounded-full border-2 border-white border-t-transparent"
+            aria-hidden="true"
+          ></span>
+        } @else {
+          <app-icon class="size-6" name="check-circle" />
+        }
       </button>
       <button
         class="cursor-pointer rounded-full p-1 hover:bg-white/15"
@@ -38,6 +47,18 @@
     <div class="px-4 pt-3 sm:px-6">
       <app-tabs class="sm:w-fit" [tabs]="pageTabs" [(active)]="activePageTab" />
     </div>
+
+    @if (store.notice(); as notice) {
+      <p
+        class="mx-4 mt-4 rounded px-3 py-2 text-sm sm:mx-6"
+        [class]="
+          notice.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-700'
+        "
+        [attr.role]="notice.type === 'success' ? 'status' : 'alert'"
+      >
+        {{ notice.message }}
+      </p>
+    }
 
     <div class="flex flex-col gap-4 p-4 sm:p-6 lg:flex-row lg:items-start">
       <section

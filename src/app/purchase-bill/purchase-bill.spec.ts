@@ -1,9 +1,12 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
+import { AuthService } from '../core/auth/auth.service';
 import { LocationService } from '../core/location/location.service';
 import { ItemEntryForm } from './components/item-entry-form/item-entry-form';
 import { PurchaseBill } from './purchase-bill';
+import { PurchaseBillService } from './purchase-bill.service';
 
 describe('PurchaseBill', () => {
   let fixture: ComponentFixture<PurchaseBill>;
@@ -11,7 +14,17 @@ describe('PurchaseBill', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      providers: [{ provide: LocationService, useValue: { getLocations: () => of([]) } }],
+      providers: [
+        { provide: LocationService, useValue: { getLocations: () => of([]) } },
+        {
+          provide: PurchaseBillService,
+          useValue: { save: () => of({ id: 12, createdAt: '', totalItems: 1, totalQty: 10 }) },
+        },
+        {
+          provide: AuthService,
+          useValue: { currentSession: signal({ email: 'user@example.com', displayName: 'User' }) },
+        },
+      ],
     });
     fixture = TestBed.createComponent(PurchaseBill);
     element = fixture.nativeElement;
@@ -81,6 +94,36 @@ describe('PurchaseBill', () => {
     expect(tableRows()).toEqual(['Apple']);
     expect(summaryValue('Total Items')).toBe('1');
     expect(summaryValue('Total Qty')).toBe('5');
+  });
+
+  it('saves the bill from the header button and shows the bill number', async () => {
+    const saveButton = element.querySelector<HTMLButtonElement>('[aria-label="Save bill"]')!;
+    expect(saveButton.disabled).toBe(true);
+
+    const form = fixture.debugElement.query(By.directive(ItemEntryForm))
+      .componentInstance as ItemEntryForm;
+    form.itemAdded.emit({
+      item: 'Mango',
+      batch: { locationCode: 'L1', locationName: 'Head Office' },
+      standardCost: 100,
+      standardPrice: 150,
+      margin: 50,
+      qty: 10,
+      freeQty: 0,
+      discount: 0,
+      totalCost: 1000,
+      totalSelling: 1500,
+    });
+    await fixture.whenStable();
+    expect(saveButton.disabled).toBe(false);
+
+    saveButton.click();
+    await fixture.whenStable();
+
+    expect(element.querySelector('[role="status"]')?.textContent).toContain(
+      'Purchase bill #12 saved with 1 item(s).',
+    );
+    expect(tableRows()).toEqual(['No items added yet.']);
   });
 
   it('shows an empty message for tabs outside the item entry', async () => {

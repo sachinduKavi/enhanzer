@@ -22,6 +22,7 @@ export class AuthService {
   private readonly locationService = inject(LocationService);
   private readonly session = signal<AuthSession | null>(this.readStoredSession());
 
+  readonly currentSession = this.session.asReadonly();
   readonly isAuthenticated = computed(() => this.session() !== null);
 
   login(email: string, password: string): Observable<AuthSession> {
