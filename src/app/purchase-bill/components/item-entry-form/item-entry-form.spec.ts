@@ -78,10 +78,20 @@ describe('ItemEntryForm', () => {
     setValue('bill-discount', '150');
     await submit();
 
-    expect(element.textContent).toContain('Choose an option from the list');
-    expect(element.textContent).toContain('Must be more than 0');
-    expect(element.textContent).toContain('Must be 100 or less');
-    expect(element.textContent).toContain('Required');
+    const errors = Object.fromEntries(
+      [...element.querySelectorAll('app-form-field')].map((field) => [
+        field.querySelector('label')!.textContent!.replace('*', '').trim(),
+        field.querySelector('[aria-live]')!.textContent!.trim(),
+      ]),
+    );
+    expect(errors).toMatchObject({
+      Item: 'Pick from the list',
+      Batch: 'Required',
+      'Standard Cost': 'Required',
+      'Standard Price': 'Required',
+      Qty: 'Must be > 0',
+      'Discount (%)': 'Must be ≤ 100',
+    });
     expect(added).not.toHaveBeenCalled();
   });
 
@@ -96,6 +106,7 @@ describe('ItemEntryForm', () => {
     setValue('bill-price', '150');
     setValue('bill-qty', '5');
     setValue('bill-discount', '20');
+    await fixture.whenStable();
     await submit();
 
     expect(added).toEqual({

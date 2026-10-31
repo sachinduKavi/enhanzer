@@ -11,9 +11,8 @@ import { Component, input } from '@angular/core';
       }
     </label>
     <ng-content />
-    @if (error()) {
-      <p class="mt-1 text-xs text-red-600">{{ error() }}</p>
-    }
+    <!-- Always rendered so an error appearing never shifts the layout under the cursor. -->
+    <p class="mt-1 min-h-4 text-xs leading-4 text-red-600" aria-live="polite">{{ error() }}</p>
   `,
 })
 export class FormField {

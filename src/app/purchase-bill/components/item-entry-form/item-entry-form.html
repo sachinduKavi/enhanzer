@@ -1,5 +1,5 @@
 <form
-  class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[1.4fr_1.4fr_1fr_1fr_1fr_0.75fr_0.75fr]"
+  class="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[1.4fr_1.4fr_1fr_1fr_1fr_1fr_1fr]"
   [formGroup]="form"
   (ngSubmit)="add()"
   novalidate
@@ -153,7 +153,7 @@
     />
   </app-form-field>
 
-  <div class="flex items-end">
+  <div class="flex items-start sm:pt-5">
     <button
       class="inline-flex cursor-pointer items-center gap-1 rounded bg-green-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-700"
       type="submit"
