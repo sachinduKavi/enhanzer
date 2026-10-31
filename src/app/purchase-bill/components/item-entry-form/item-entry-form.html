@@ -1,0 +1,165 @@
+<form
+  class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[1.4fr_1.4fr_1fr_1fr_1fr_0.75fr_0.75fr]"
+  [formGroup]="form"
+  (ngSubmit)="add()"
+  novalidate
+>
+  <app-form-field
+    label="Item"
+    for="bill-item"
+    [required]="true"
+    [error]="fieldError(form.controls.item)"
+  >
+    <app-autocomplete inputId="bill-item" formControlName="item" [options]="itemNames" />
+  </app-form-field>
+
+  <app-form-field
+    label="Batch"
+    for="bill-batch"
+    [required]="true"
+    [error]="batchStatus() === 'error' ? null : fieldError(form.controls.batch)"
+  >
+    <select class="field-input text-left" id="bill-batch" formControlName="batch">
+      <option disabled [ngValue]="null">
+        {{ batchStatus() === 'loading' ? 'Loading batches…' : 'Select a batch' }}
+      </option>
+      @for (batch of batches(); track batch.locationCode) {
+        <option [ngValue]="batch">{{ batch.locationName }}</option>
+      }
+    </select>
+    @if (batchStatus() === 'error') {
+      <p class="mt-1 text-xs text-red-600">
+        Couldn't load batches.
+        <button class="cursor-pointer font-medium underline" type="button" (click)="loadBatches()">
+          Retry
+        </button>
+      </p>
+    } @else if (batchStatus() === 'loaded' && batches().length === 0) {
+      <p class="mt-1 text-xs text-gray-500">No batches saved yet. Log in again to sync them.</p>
+    }
+  </app-form-field>
+
+  <app-form-field
+    label="Standard Cost"
+    for="bill-cost"
+    [required]="true"
+    [error]="fieldError(form.controls.standardCost)"
+  >
+    <input
+      class="field-input"
+      id="bill-cost"
+      type="number"
+      inputmode="decimal"
+      min="0"
+      step="0.01"
+      placeholder="0.00"
+      formControlName="standardCost"
+    />
+  </app-form-field>
+
+  <app-form-field
+    label="Standard Price"
+    for="bill-price"
+    [required]="true"
+    [error]="fieldError(form.controls.standardPrice)"
+  >
+    <input
+      class="field-input"
+      id="bill-price"
+      type="number"
+      inputmode="decimal"
+      min="0"
+      step="0.01"
+      placeholder="0.00"
+      formControlName="standardPrice"
+    />
+  </app-form-field>
+
+  <app-form-field label="Margin" for="bill-margin">
+    <input
+      class="field-input"
+      id="bill-margin"
+      readonly
+      tabindex="-1"
+      placeholder="0.00"
+      [value]="margin() | number: '1.2-2'"
+    />
+  </app-form-field>
+
+  <app-form-field
+    label="Qty"
+    for="bill-qty"
+    [required]="true"
+    [error]="fieldError(form.controls.qty)"
+  >
+    <input
+      class="field-input"
+      id="bill-qty"
+      type="number"
+      inputmode="decimal"
+      min="0"
+      formControlName="qty"
+    />
+  </app-form-field>
+
+  <app-form-field label="Free Qty" for="bill-free-qty" [error]="fieldError(form.controls.freeQty)">
+    <input
+      class="field-input"
+      id="bill-free-qty"
+      type="number"
+      inputmode="decimal"
+      min="0"
+      formControlName="freeQty"
+    />
+  </app-form-field>
+
+  <app-form-field
+    label="Discount (%)"
+    for="bill-discount"
+    [error]="fieldError(form.controls.discount)"
+  >
+    <input
+      class="field-input"
+      id="bill-discount"
+      type="number"
+      inputmode="decimal"
+      min="0"
+      max="100"
+      step="0.01"
+      placeholder="0.00"
+      formControlName="discount"
+    />
+  </app-form-field>
+
+  <app-form-field label="Total Cost" for="bill-total-cost">
+    <input
+      class="field-input"
+      id="bill-total-cost"
+      readonly
+      tabindex="-1"
+      placeholder="0.00"
+      [value]="totalCost() | number: '1.2-2'"
+    />
+  </app-form-field>
+
+  <app-form-field label="Total Selling" for="bill-total-selling">
+    <input
+      class="field-input"
+      id="bill-total-selling"
+      readonly
+      tabindex="-1"
+      placeholder="0.00"
+      [value]="totalSelling() | number: '1.2-2'"
+    />
+  </app-form-field>
+
+  <div class="flex items-end">
+    <button
+      class="inline-flex cursor-pointer items-center gap-1 rounded bg-green-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-700"
+      type="submit"
+    >
+      Add
+      <app-icon class="size-4" name="plus" />
+    </button>
+  </div>
+</form>

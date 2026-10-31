@@ -9,10 +9,13 @@ describe('BillSummary', () => {
     await fixture.whenStable();
 
     const rows = [...fixture.nativeElement.querySelectorAll('app-summary-row')].map(
-      (row: HTMLElement) => row.textContent?.replace(/\s+/g, ' ').trim(),
+      (row: HTMLElement) => [
+        row.querySelector('dt')?.textContent?.trim(),
+        row.querySelector('dd')?.textContent?.trim(),
+      ],
     );
 
-    expect(rows).toContain('Total Items 2');
-    expect(rows).toContain('Total Qty 1,500');
+    expect(rows).toContainEqual(['Total Items', '2']);
+    expect(rows).toContainEqual(['Total Qty', '1,500']);
   });
 });

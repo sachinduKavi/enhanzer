@@ -47,7 +47,7 @@
           <app-tabs class="sm:w-fit" [tabs]="detailTabs" [(active)]="activeDetailTab" />
 
           @if (activeDetailTab() === 'Items') {
-            <div class="min-h-64 pt-6"></div>
+            <app-item-entry-form class="block pt-6" />
           } @else {
             <p class="py-16 text-center text-sm text-gray-500">
               No {{ activeDetailTab() | lowercase }} for this bill.

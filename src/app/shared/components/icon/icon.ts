@@ -10,7 +10,9 @@ export type IconName =
   | 'box'
   | 'dollar'
   | 'tag'
-  | 'receipt';
+  | 'receipt'
+  | 'list'
+  | 'plus';
 
 @Component({
   selector: 'app-icon',
@@ -67,6 +69,13 @@ export type IconName =
         @case ('receipt') {
           <rect x="3" y="6" width="18" height="12" rx="2" />
           <circle cx="12" cy="12" r="2.5" />
+        }
+        @case ('list') {
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <path d="M7 9h10M7 12h10M7 15h6" />
+        }
+        @case ('plus') {
+          <path d="M12 5v14M5 12h14" />
         }
       }
     </svg>

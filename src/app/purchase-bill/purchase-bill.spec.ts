@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { LocationService } from '../core/location/location.service';
 import { PurchaseBill } from './purchase-bill';
 
 describe('PurchaseBill', () => {
@@ -6,6 +8,9 @@ describe('PurchaseBill', () => {
   let element: HTMLElement;
 
   beforeEach(async () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: LocationService, useValue: { getLocations: () => of([]) } }],
+    });
     fixture = TestBed.createComponent(PurchaseBill);
     element = fixture.nativeElement;
     await fixture.whenStable();

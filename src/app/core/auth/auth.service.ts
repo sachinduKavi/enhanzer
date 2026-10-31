@@ -38,7 +38,9 @@ export class AuthService {
       switchMap((user) =>
         this.locationService
           .saveLocations(user.User_Locations)
-          .pipe(map(() => ({ email: user.Email, displayName: user.User_Display_Name ?? user.Email }))),
+          .pipe(
+            map(() => ({ email: user.Email, displayName: user.User_Display_Name ?? user.Email })),
+          ),
       ),
       tap((session) => this.storeSession(session)),
     );

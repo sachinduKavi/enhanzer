@@ -1,3 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+@layer components {
+  .field-input {
+    @apply w-full border-0 border-b border-gray-400 bg-transparent px-0 py-1.5 text-right text-sm text-gray-900 tabular-nums outline-none placeholder:text-gray-400 focus:border-blue-700;
+  }
+
+  .field-input[readonly] {
+    @apply border-transparent bg-gray-100 px-2 text-gray-600 focus:border-transparent;
+  }
+
+  .field-input.ng-touched.ng-invalid,
+  app-autocomplete.ng-touched.ng-invalid .field-input {
+    @apply border-red-600;
+  }
+}

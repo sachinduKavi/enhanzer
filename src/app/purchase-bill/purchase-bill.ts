@@ -4,10 +4,11 @@ import { Icon } from '../shared/components/icon/icon';
 import { PageHeader } from '../shared/components/page-header/page-header';
 import { Tabs } from '../shared/components/tabs/tabs';
 import { BillSummary } from './components/bill-summary/bill-summary';
+import { ItemEntryForm } from './components/item-entry-form/item-entry-form';
 
 @Component({
   selector: 'app-purchase-bill',
-  imports: [BillSummary, Icon, LowerCasePipe, PageHeader, Tabs],
+  imports: [BillSummary, Icon, ItemEntryForm, LowerCasePipe, PageHeader, Tabs],
   templateUrl: './purchase-bill.html',
 })
 export class PurchaseBill {
