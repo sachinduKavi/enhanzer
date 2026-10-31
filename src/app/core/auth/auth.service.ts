@@ -59,6 +59,11 @@ export class AuthService {
     return user as AuthenticatedUser;
   }
 
+  logout(): void {
+    sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    this.session.set(null);
+  }
+
   // sessionStorage is cleared when the tab closes. The password is never stored.
   private storeSession(session: AuthSession): void {
     sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));

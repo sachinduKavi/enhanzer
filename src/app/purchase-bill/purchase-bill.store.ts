@@ -35,6 +35,11 @@ export class PurchaseBillStore {
     this.itemsState.update((items) => items.filter((_, i) => i !== index));
   }
 
+  reset(): void {
+    this.itemsState.set([]);
+    this.notice.set(null);
+  }
+
   save(): void {
     const createdBy = this.authService.currentSession()?.email;
     if (!this.canSave() || !createdBy) {

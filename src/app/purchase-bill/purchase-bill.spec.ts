@@ -1,7 +1,9 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
+import { vi } from 'vitest';
 import { AuthService } from '../core/auth/auth.service';
 import { LocationService } from '../core/location/location.service';
 import { ItemEntryForm } from './components/item-entry-form/item-entry-form';
@@ -11,8 +13,10 @@ import { PurchaseBillService } from './purchase-bill.service';
 describe('PurchaseBill', () => {
   let fixture: ComponentFixture<PurchaseBill>;
   let element: HTMLElement;
+  const logout = vi.fn();
 
   beforeEach(async () => {
+    logout.mockReset();
     TestBed.configureTestingModule({
       providers: [
         { provide: LocationService, useValue: { getLocations: () => of([]) } },
@@ -22,8 +26,12 @@ describe('PurchaseBill', () => {
         },
         {
           provide: AuthService,
-          useValue: { currentSession: signal({ email: 'user@example.com', displayName: 'User' }) },
+          useValue: {
+            currentSession: signal({ email: 'user@example.com', displayName: 'User' }),
+            logout,
+          },
         },
+        provideRouter([]),
       ],
     });
     fixture = TestBed.createComponent(PurchaseBill);
@@ -124,6 +132,43 @@ describe('PurchaseBill', () => {
       'Purchase bill #12 saved with 1 item(s).',
     );
     expect(tableRows()).toEqual(['No items added yet.']);
+  });
+
+  it('clears the unsaved rows and the form with the reset button', async () => {
+    const form = fixture.debugElement.query(By.directive(ItemEntryForm))
+      .componentInstance as ItemEntryForm;
+    const itemInput = element.querySelector<HTMLInputElement>('#bill-item')!;
+    itemInput.value = 'Kiwi';
+    itemInput.dispatchEvent(new Event('input'));
+    form.itemAdded.emit({
+      item: 'Mango',
+      batch: { locationCode: 'L1', locationName: 'Head Office' },
+      standardCost: 100,
+      standardPrice: 150,
+      margin: 50,
+      qty: 10,
+      freeQty: 0,
+      discount: 0,
+      totalCost: 1000,
+      totalSelling: 1500,
+    });
+    await fixture.whenStable();
+
+    element.querySelector<HTMLButtonElement>('[aria-label="Reset"]')!.click();
+    await fixture.whenStable();
+
+    expect(tableRows()).toEqual(['No items added yet.']);
+    expect(summaryValue('Total Items')).toBe('0');
+    expect(itemInput.value).toBe('');
+  });
+
+  it('logs out and returns to the login page', async () => {
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    element.querySelector<HTMLButtonElement>('[aria-label="Log out"]')!.click();
+
+    expect(logout).toHaveBeenCalled();
+    expect(navigate).toHaveBeenCalledWith(['/login']);
   });
 
   it('shows an empty message for tabs outside the item entry', async () => {

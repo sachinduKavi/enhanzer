@@ -91,6 +91,10 @@ export class ItemEntryForm {
       totalCost: this.totalCost()!,
       totalSelling: this.totalSelling()!,
     });
+    this.reset();
+  }
+
+  reset(): void {
     this.form.reset();
   }
 }

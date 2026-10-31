@@ -2,10 +2,12 @@
   <div class="mx-auto max-w-7xl overflow-hidden bg-white shadow-md sm:rounded-md">
     <app-page-header title="Purchase Bill" subtitle="Enter Information for the Purchase Bill">
       <button
-        class="cursor-pointer rounded-full p-1 hover:bg-white/15"
+        class="cursor-pointer rounded-full p-1 hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
         type="button"
-        title="Reset"
+        title="Clear the form and unsaved items"
         aria-label="Reset"
+        [disabled]="store.isSaving()"
+        (click)="resetBill()"
       >
         <app-icon class="size-6" name="refresh" />
       </button>
@@ -37,8 +39,9 @@
       <button
         class="cursor-pointer rounded-full p-1 hover:bg-white/15"
         type="button"
-        title="Close"
-        aria-label="Close"
+        title="Log out"
+        aria-label="Log out"
+        (click)="logout()"
       >
         <app-icon class="size-6" name="x-circle" />
       </button>

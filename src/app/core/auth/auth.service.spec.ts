@@ -69,6 +69,16 @@ describe('AuthService', () => {
     expect(sessionStorage.getItem('enhanzer.session')).not.toContain('secret');
   });
 
+  it('logs out by clearing the stored session', () => {
+    flushLogin(successResponse);
+
+    service.logout();
+
+    expect(service.isAuthenticated()).toBe(false);
+    expect(service.currentSession()).toBeNull();
+    expect(sessionStorage.getItem('enhanzer.session')).toBeNull();
+  });
+
   it('does not sign in when saving the locations fails', () => {
     saveLocations.mockReturnValue(throwError(() => new Error('Failed to save locations.')));
 
