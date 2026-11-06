@@ -37,11 +37,12 @@ export class AuthService {
     return this.http.post<LoginResponse>(LOGIN_API_URL, request).pipe(
       map((response) => this.getAuthenticatedUser(response)),
       switchMap((user) =>
-        this.locationService
-          .saveLocations(user.User_Locations)
-          .pipe(
-            map(() => ({ email: user.Email, displayName: user.User_Display_Name ?? user.Email })),
-          ),
+        this.locationService.saveLocations(user.User_Locations).pipe(
+          map(() => ({
+            email: user.Email,
+            displayName: user.User_Display_Name ?? user.Email,
+          })),
+        ),
       ),
       tap((session) => this.storeSession(session)),
     );

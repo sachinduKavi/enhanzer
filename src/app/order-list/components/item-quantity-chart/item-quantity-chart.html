@@ -1,0 +1,45 @@
+<section
+  class="rounded-md border border-gray-200 p-4 shadow-sm sm:p-5"
+  aria-labelledby="item-qty-title"
+>
+  <h2 class="font-semibold text-gray-900" id="item-qty-title">Quantity by Item</h2>
+  <p class="text-xs text-gray-500">All purchase bills, grouped by item name</p>
+
+  @if (items().length) {
+    <div class="mt-4 flex flex-col items-center gap-4">
+      <div class="relative size-48 shrink-0">
+        <canvas
+          baseChart
+          type="doughnut"
+          [data]="chartData()"
+          [options]="chartOptions"
+          role="img"
+          [attr.aria-label]="'Donut chart of quantity by item, total ' + totalQty()"
+        ></canvas>
+        <div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+          <span class="text-2xl font-bold text-gray-900 tabular-nums">
+            {{ totalQty() | number: '1.0-2' }}
+          </span>
+          <span class="text-xs text-gray-500">Total Qty</span>
+        </div>
+      </div>
+
+      <ul class="w-full flex-1 divide-y divide-gray-100 text-sm">
+        @for (item of items(); track item.name) {
+          <li class="flex items-center gap-3 py-2">
+            <span class="size-3 shrink-0 rounded-sm" [style.background-color]="item.color"></span>
+            <span class="flex-1 text-gray-700">{{ item.name }}</span>
+            <span class="font-medium text-gray-800 tabular-nums">{{
+              item.qty | number: '1.0-2'
+            }}</span>
+            <span class="w-12 text-right text-xs text-gray-500 tabular-nums">
+              {{ item.share | percent }}
+            </span>
+          </li>
+        }
+      </ul>
+    </div>
+  } @else {
+    <p class="py-8 text-center text-sm text-gray-500">No items to chart yet.</p>
+  }
+</section>

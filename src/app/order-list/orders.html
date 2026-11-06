@@ -1,0 +1,152 @@
+<div class="min-h-dvh bg-gray-100 sm:p-6">
+  <div class="mx-auto max-w-7xl overflow-hidden bg-white shadow-md sm:rounded-md">
+    <app-page-header title="Purchase Orders" subtitle="View all saved purchase bills">
+      <button
+        class="cursor-pointer rounded-full p-1 hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50"
+        type="button"
+        title="Reload orders"
+        aria-label="Reload orders"
+        [disabled]="status() === 'loading'"
+        (click)="loadOrders()"
+      >
+        <app-icon class="size-6" name="refresh" />
+      </button>
+      <a
+        class="rounded-full p-1 hover:bg-white/15"
+        routerLink="/purchase-bill"
+        title="New purchase bill"
+        aria-label="New purchase bill"
+      >
+        <app-icon class="size-6" name="plus-circle" />
+      </a>
+      <button
+        class="cursor-pointer rounded-full p-1 hover:bg-white/15"
+        type="button"
+        title="Log out"
+        aria-label="Log out"
+        (click)="logout()"
+      >
+        <app-icon class="size-6" name="x-circle" />
+      </button>
+    </app-page-header>
+
+    <div class="flex flex-col gap-4 p-4 sm:p-6 lg:flex-row lg:items-start">
+      <section class="min-w-0 flex-1 space-y-4">
+        @if (status() === 'loading') {
+          <div class="flex items-center justify-center gap-3 py-16 text-sm text-gray-500">
+            <span
+              class="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent"
+              aria-hidden="true"
+            ></span>
+            Loading orders…
+          </div>
+        } @else if (status() === 'error') {
+          <div class="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+            Couldn't load the purchase orders.
+            <button
+              class="cursor-pointer font-medium underline"
+              type="button"
+              (click)="loadOrders()"
+            >
+              Retry
+            </button>
+          </div>
+        } @else {
+          @for (order of orderlist(); track order.id) {
+            <article
+              class="rounded-md border border-l-4 border-gray-200 border-l-primary p-4 shadow-sm sm:p-5"
+            >
+              <!-- Order information -->
+              <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h2 class="font-semibold text-gray-900">
+                    Purchase bill <span class="text-primary">#{{ order.id }}</span>
+                  </h2>
+                  <p class="text-xs text-gray-500">{{ order.createdAt | date: 'medium' }}</p>
+                </div>
+
+                <dl class="flex gap-6 text-right text-xs">
+                  <div>
+                    <dt class="text-gray-500">Total Items</dt>
+                    <dd class="text-sm font-semibold text-gray-800 tabular-nums">
+                      {{ order.totalItems }}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt class="text-gray-500">Total Qty</dt>
+                    <dd class="text-sm font-semibold text-gray-800 tabular-nums">
+                      {{ order.totalQty | number: '1.0-2' }}
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+
+              <!-- Items -->
+              <div class="mt-4 overflow-x-auto">
+                <table class="w-full min-w-[32rem] text-sm">
+                  <thead>
+                    <tr class="border-b border-gray-200 text-xs font-medium text-primary">
+                      <th class="px-2 py-3 text-left font-medium" scope="col">#</th>
+                      <th class="px-2 py-3 text-left font-medium" scope="col">Item</th>
+                      <th class="px-2 py-3 text-right font-medium" scope="col">Qty</th>
+                      <th class="px-2 py-3 text-right font-medium" scope="col">Price</th>
+                      <th class="px-2 py-3 text-right font-medium" scope="col">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200 text-gray-700 tabular-nums">
+                    @for (item of order.items; track item.id; let i = $index) {
+                      <tr class="odd:bg-gray-50">
+                        <td class="px-2 py-3 text-gray-500">{{ i + 1 }}</td>
+                        <td class="px-2 py-3">{{ item.itemName }}</td>
+                        <td class="px-2 py-3 text-right">{{ item.quantity | number: '1.0-2' }}</td>
+                        <td class="px-2 py-3 text-right">{{ item.price | number: '1.2-2' }}</td>
+                        <td class="px-2 py-3 text-right font-medium">
+                          {{ item.totalPrice | number: '1.2-2' }}
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td class="px-2 py-6 text-center text-gray-500" colspan="5">
+                          No items found.
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          } @empty {
+            <div class="rounded-md border border-dashed border-gray-300 p-12 text-center">
+              <p class="font-medium text-gray-700">No purchase orders yet.</p>
+              <a
+                class="mt-2 inline-block text-sm font-medium text-primary hover:underline"
+                routerLink="/purchase-bill"
+              >
+                Create a purchase bill
+              </a>
+            </div>
+          }
+        }
+      </section>
+
+      <div class="flex shrink-0 flex-col gap-4 lg:w-80">
+        <aside class="space-y-5 rounded-md border border-gray-200 bg-gray-50 p-4">
+          <h2 class="flex items-center gap-2 font-semibold text-primary">
+            <app-icon class="size-5" name="chart" />
+            Summary
+          </h2>
+
+          <app-summary-section title="Order Summary" icon="receipt">
+            <app-summary-row label="Total Orders" [value]="orderlist().length | number" />
+            <app-summary-row label="Total Items" [value]="totalItems() | number" />
+            <app-summary-row label="Total Qty" [value]="totalQty() | number: '1.0-2'" />
+          </app-summary-section>
+        </aside>
+
+        @if (status() === 'loaded' && orderlist().length) {
+          <app-item-quantity-chart [orders]="orderlist()" />
+        }
+      </div>
+    </div>
+  </div>
+</div>

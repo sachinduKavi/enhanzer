@@ -13,5 +13,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./purchase-bill/purchase-bill').then((m) => m.PurchaseBill),
   },
+  {
+    path: 'order-list',
+    canActivate: [authGuard],
+    loadComponent: () => import('./order-list/orders').then((m) => m.OrderList),
+  },
   { path: '**', redirectTo: 'login' },
 ];

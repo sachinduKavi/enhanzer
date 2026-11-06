@@ -2,6 +2,10 @@
 
 @import 'tailwindcss';
 
+@theme {
+  --color-primary: #029fe3;
+}
+
 @layer components {
   .field-input {
     @apply w-full border-0 border-b border-gray-400 bg-transparent px-0 py-1.5 text-right text-sm text-gray-900 tabular-nums outline-none placeholder:text-gray-400 focus:border-blue-700;

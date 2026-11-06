@@ -1,6 +1,6 @@
 import { LowerCasePipe } from '@angular/common';
 import { Component, inject, signal, viewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth/auth.service';
 import { Icon } from '../shared/components/icon/icon';
 import { PageHeader } from '../shared/components/page-header/page-header';
@@ -12,7 +12,16 @@ import { PurchaseBillStore } from './purchase-bill.store';
 
 @Component({
   selector: 'app-purchase-bill',
-  imports: [BillSummary, Icon, ItemEntryForm, ItemsTable, LowerCasePipe, PageHeader, Tabs],
+  imports: [
+    BillSummary,
+    Icon,
+    ItemEntryForm,
+    ItemsTable,
+    LowerCasePipe,
+    PageHeader,
+    RouterLink,
+    Tabs,
+  ],
   providers: [PurchaseBillStore],
   templateUrl: './purchase-bill.html',
 })

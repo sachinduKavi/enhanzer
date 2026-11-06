@@ -1,6 +1,14 @@
 <div class="min-h-dvh bg-gray-100 sm:p-6">
   <div class="mx-auto max-w-7xl overflow-hidden bg-white shadow-md sm:rounded-md">
     <app-page-header title="Purchase Bill" subtitle="Enter Information for the Purchase Bill">
+      <a
+        class="flex items-center gap-1.5 rounded-full px-2 py-1 text-sm font-medium hover:bg-white/15"
+        routerLink="/order-list"
+        title="View purchase orders"
+      >
+        <app-icon class="size-6" name="list" />
+        Orders
+      </a>
       <button
         class="cursor-pointer rounded-full p-1 hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
         type="button"
